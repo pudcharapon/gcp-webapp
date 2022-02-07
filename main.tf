@@ -10,6 +10,8 @@ terraform {
 provider "google" {
   project = var.project
   region  = var.region
+  credentials = file("peterp-340610-273bee9be424.json")
+
 }
 
 resource "google_compute_network" "hashicat" {
