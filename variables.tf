@@ -10,6 +10,9 @@ variable "project" {
   default     = "peterp-340610"
 }
 
+variable "credentials" {
+}
+
 variable "prefix" {
   description = "This prefix will be included in the name of some resources. You can use your own name or any other short string here."
   default     = "peterp"
