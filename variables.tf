@@ -7,10 +7,12 @@
 
 variable "project" {
   description = "ID of your GCP project. Make sure you set this up before running this terraform code.  REQUIRED."
+  default     = "peterp-340610"
 }
 
 variable "prefix" {
   description = "This prefix will be included in the name of some resources. You can use your own name or any other short string here."
+  default     = "peterp"
 }
 
 variable "region" {
@@ -44,6 +46,6 @@ variable "width" {
 }
 
 variable "placeholder" {
-  default     = "placekitten.com"
+  default     = "placedog.net"
   description = "Image-as-a-service URL. Some other fun ones to try are fillmurray.com, placecage.com, placebeard.it, loremflickr.com, baconmockup.com, placeimg.com, placebear.com, placeskull.com, stevensegallery.com, placedog.net"
 }
