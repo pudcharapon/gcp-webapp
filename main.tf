@@ -14,21 +14,21 @@ provider "google" {
 
 }
 
-resource "google_compute_network" "hashicat" {
+resource "google_compute_network" "default" {
   name                    = "${var.prefix}-vpc-${var.region}"
   auto_create_subnetworks = false
 }
 
-resource "google_compute_subnetwork" "hashicat" {
+resource "google_compute_subnetwork" "default" {
   name          = "${var.prefix}-subnet"
   region        = var.region
-  network       = google_compute_network.hashicat.self_link
+  network       = google_compute_network.default.self_link
   ip_cidr_range = var.subnet_prefix
 }
 
 resource "google_compute_firewall" "http-server" {
   name    = "${var.prefix}-default-allow-ssh-http"
-  network = google_compute_network.hashicat.self_link
+  network = google_compute_network.default.self_link
 
   allow {
     protocol = "tcp"
@@ -45,8 +45,8 @@ resource "tls_private_key" "ssh-key" {
   rsa_bits  = "4096"
 }
 
-resource "google_compute_instance" "hashicat" {
-  name         = "${var.prefix}-hashicat"
+resource "google_compute_instance" "default" {
+  name         = "${var.prefix}-default"
   zone         = "${var.region}-b"
   machine_type = var.machine_type
 
@@ -57,7 +57,7 @@ resource "google_compute_instance" "hashicat" {
   }
 
   network_interface {
-    subnetwork = google_compute_subnetwork.hashicat.self_link
+    subnetwork = google_compute_subnetwork.default.self_link
     access_config {
     }
   }
@@ -69,14 +69,14 @@ resource "google_compute_instance" "hashicat" {
   tags = ["http-server"]
 
   labels = {
-    name = "hashicat"
+    name = "default"
   }
 
 }
 
 resource "null_resource" "configure-cat-app" {
   depends_on = [
-    google_compute_instance.hashicat,
+    google_compute_instance.default,
   ]
 
   triggers = {
@@ -92,7 +92,7 @@ resource "null_resource" "configure-cat-app" {
       user        = "ubuntu"
       timeout     = "300s"
       private_key = tls_private_key.ssh-key.private_key_pem
-      host        = google_compute_instance.hashicat.network_interface.0.access_config.0.nat_ip
+      host        = google_compute_instance.default.network_interface.0.access_config.0.nat_ip
     }
   }
 
@@ -115,7 +115,7 @@ resource "null_resource" "configure-cat-app" {
       user        = "ubuntu"
       timeout     = "300s"
       private_key = tls_private_key.ssh-key.private_key_pem
-      host        = google_compute_instance.hashicat.network_interface.0.access_config.0.nat_ip
+      host        = google_compute_instance.default.network_interface.0.access_config.0.nat_ip
     }
   }
 }
